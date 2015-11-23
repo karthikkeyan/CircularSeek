@@ -74,10 +74,10 @@ the above code returns the increased region of the thumb view by 20 points.
 ```swift
 
 override func beginTrackingWithTouch(touch: UITouch, withEvent event: UIEvent?) -> Bool {
-        let point = touch.locationInView(self)
-        let rect = CGRectInset(self.thumbButton.frame, -20, -20)
-        return CGRectContainsPoint(rect, point)        
-    }
+	let point = touch.locationInView(self)
+	let rect = CGRectInset(self.thumbButton.frame, -20, -20)
+	return CGRectContainsPoint(rect, point)        
+}
     
 ```
 
@@ -144,17 +144,17 @@ Put it all together,
 
 ```swift
 override func continueTrackingWithTouch(touch: UITouch, withEvent event: UIEvent?) -> Bool {
-        let location = touch.locationInView(self)
+	let location = touch.locationInView(self)
+
+	let dx = location.x - (self.frame.size.width * 0.5)
+	let dy = location.y - (self.frame.size.height * 0.5)
         
-        let dx = location.x - (self.frame.size.width * 0.5)
-        let dy = location.y - (self.frame.size.height * 0.5)
+	let angle = Double(atan2(Double(dy), Double(dx)))
         
-        let angle = Double(atan2(Double(dy), Double(dx)))
+	moveThumbToAngle(angleInRadians: angle)
         
-        moveThumbToAngle(angleInRadians: angle)
-        
-        return true
-    }
+	return true
+}
 ```
 
 Now thumb view will rotate in a circular path inside your view's bounds.
