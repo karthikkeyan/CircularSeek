@@ -35,16 +35,6 @@ class CircularSeeker: UIControl {
     var thumbColor: UIColor = UIColor.redColor()
     
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        
-        addSeekerBar()
-        addThumb()
-        
-        moveThumbToAngle(angleInRadians: degreeToRadian(Double(startAngle)))
-    }
-    
-    
     // MARK: Private Methods -
     
     private func addSeekerBar() {
@@ -87,10 +77,14 @@ class CircularSeeker: UIControl {
         var rect = thumbButton.frame
         
         let radius = self.frame.size.width * 0.5
+        let center = CGPointMake(radius, radius)
         let thumbCenter: CGFloat = 10.0
         
-        let finalX = (CGFloat(x) * (radius - thumbCenter)) + radius
-        let finalY = (CGFloat(y) * (radius - thumbCenter)) + radius
+        // x = cos(angle) * radius + CenterX;
+        let finalX = (CGFloat(x) * (radius - thumbCenter)) + center.x
+        
+        // y = sin(angle) * radius + CenterY;
+        let finalY = (CGFloat(y) * (radius - thumbCenter)) + center.y
         
         rect.origin.x = finalX - thumbCenter
         rect.origin.y = finalY - thumbCenter
@@ -101,11 +95,17 @@ class CircularSeeker: UIControl {
     private func resetThumb() {
         UIView.animateWithDuration(0.2, delay: 0.0, options: [ .CurveEaseOut, .BeginFromCurrentState ], animations: { () -> Void in
             self.thumbButton.transform = CGAffineTransformIdentity
-            }, completion: nil)
+            }, completion: { _ in
+                self.fireValueChangeEvent()
+            })
+    }
+    
+    private func fireValueChangeEvent() {
+        self.sendActionsForControlEvents(.ValueChanged)
     }
     
     
-    // MARK: Hit Test -
+    // MARK: Touch Events -
     
     override func beginTrackingWithTouch(touch: UITouch, withEvent event: UIEvent?) -> Bool {
         let point = touch.locationInView(self)
@@ -122,9 +122,6 @@ class CircularSeeker: UIControl {
         
         return canBegin
     }
-    
-    
-    // MARK: Touch Event -
     
     override func continueTrackingWithTouch(touch: UITouch, withEvent event: UIEvent?) -> Bool {
         let location = touch.locationInView(self)
@@ -175,6 +172,13 @@ class CircularSeeker: UIControl {
         resetThumb()
     }
     
-    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        addSeekerBar()
+        addThumb()
+        
+        moveThumbToAngle(angleInRadians: degreeToRadian(Double(currentAngle)))
+    }
     
 }

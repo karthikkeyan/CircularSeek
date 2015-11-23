@@ -15,23 +15,8 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pxu-19-cyS" customClass="CircularSeeker" customModule="CircularSeek" customModuleProvider="target">
-                                <rect key="frame" x="200" y="200" width="200" height="200"/>
-                                <animations/>
-                                <color key="backgroundColor" red="0.86274509799999999" green="0.86274509799999999" blue="0.86274509799999999" alpha="1" colorSpace="calibratedRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="200" id="MuQ-Yu-fNY"/>
-                                    <constraint firstAttribute="height" constant="200" id="Thz-Eq-Ufq"/>
-                                </constraints>
-                            </view>
-                        </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstItem="pxu-19-cyS" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Foq-P1-4CF"/>
-                            <constraint firstItem="pxu-19-cyS" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="TbA-n8-hii"/>
-                        </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
