@@ -28,14 +28,39 @@ class CircularSeeker: UIControl {
     
     var endAngle: Float = 70.0
     
-    var currentAngle: Float = 120.0
+    var currentAngle: Float = 120.0 {
+        didSet {
+            self.setNeedsLayout()
+        }
+    }
     
     var seekBarColor: UIColor = UIColor.grayColor()
     
     var thumbColor: UIColor = UIColor.redColor()
     
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        initSubViews()
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        initSubViews()
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
     
     // MARK: Private Methods -
+    
+    private func initSubViews() {
+        addSeekerBar()
+        addThumb()
+    }
     
     private func addSeekerBar() {
         let center = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)
@@ -62,14 +87,11 @@ class CircularSeeker: UIControl {
         thumbButton.layer.cornerRadius = thumbButton.frame.size.width/2
         thumbButton.layer.masksToBounds = true
         thumbButton.userInteractionEnabled = false
-        
-        if thumbButton.superview == nil {
-            self.addSubview(thumbButton)
-        }
+        self.addSubview(thumbButton)
     }
     
-    private func moveThumbToAngle(angleInRadians angle: Double) {
-        currentAngle = Float(radianToDegree(angle))
+    private func updateThumbPosition() {
+        let angle = degreeToRadian(Double(currentAngle))
         
         let x = cos(angle)
         let y = sin(angle)
@@ -141,10 +163,10 @@ class CircularSeeker: UIControl {
             let endDistance = fabs(Float(degree) - endAngle)
             
             if startDistance < endDistance {
-                moveThumbToAngle(angleInRadians: degreeToRadian(Double(startAngle)))
+                currentAngle = startAngle
             }
             else {
-                moveThumbToAngle(angleInRadians: degreeToRadian(Double(endAngle)))
+                currentAngle = endAngle
             }
         }
         
@@ -163,7 +185,7 @@ class CircularSeeker: UIControl {
             }
         }
         
-        moveThumbToAngle(angleInRadians: degreeToRadian(degree))
+        currentAngle = Float(degree)
         
         return true
     }
@@ -175,10 +197,15 @@ class CircularSeeker: UIControl {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        addSeekerBar()
-        addThumb()
+        let center = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)
         
-        moveThumbToAngle(angleInRadians: degreeToRadian(Double(currentAngle)))
+        let sAngle = degreeToRadian(Double(startAngle))
+        let eAngle = degreeToRadian(Double(endAngle))
+        
+        let path = UIBezierPath(arcCenter: center, radius: (self.bounds.size.width - 18)/2, startAngle: CGFloat(sAngle), endAngle: CGFloat(eAngle), clockwise: true)
+        seekerBarLayer.path = path.CGPath
+        
+        updateThumbPosition()
     }
     
 }

@@ -20,6 +20,8 @@ class ViewController: UIViewController {
         seekBar.startAngle = 120
         seekBar.endAngle = 60
         seekBar.currentAngle = 120
+        seekBar.thumbColor = UIColor(colorLiteralRed: 242.0/255.0, green: 107.0/255.0, blue: 107.0/255.0, alpha: 1.0)
+        seekBar.seekBarColor = UIColor(colorLiteralRed: 238.0/255.0, green: 238.0/255.0, blue: 238.0/255.0, alpha: 1.0)
         seekBar.addTarget(self, action: Selector("seekBarDidChangeValue:"), forControlEvents: .ValueChanged)
         self.view.addSubview(seekBar)
     }
@@ -29,12 +31,6 @@ class ViewController: UIViewController {
         
         seekBar.frame = CGRect(x: (self.view.frame.size.width - 200) * 0.5, y: (self.view.frame.size.height - 200) * 0.5, width: 200, height: 200)
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
     
     func seekBarDidChangeValue(sender: AnyObject) {
         print(seekBar.currentAngle)

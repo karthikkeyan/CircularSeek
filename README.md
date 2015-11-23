@@ -61,6 +61,64 @@ func endTrackingWithTouch(touch: UITouch?, withEvent event: UIEvent?)
 
 These methods will get call when/where ever user interact within our view. We dont what that. What we what is to begin the user interaction if only the user touches the **thumb view** of our control.
 
+### Subview Setup
+
+Lets create a property called **currentAngle** and it's **didSet** will reloayout subviews whenever its value changed.
+
+```swift
+var currentAngle: Float = 120.0 {
+	didSet {
+		self.setNeedsLayout()
+	}
+}
+```
+
+Override the **layoutSubviews** to update circular path and thumb position 
+
+```swift
+override func layoutSubviews() {
+	super.layoutSubviews()
+        
+	let center = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)
+        
+	let sAngle = degreeToRadian(Double(startAngle))
+	let eAngle = degreeToRadian(Double(endAngle))
+        
+	let path = UIBezierPath(arcCenter: center, radius: (self.bounds.size.width - 18)/2, startAngle: CGFloat(sAngle), endAngle: CGFloat(eAngle), clockwise: true)
+	seekerBarLayer.path = path.CGPath
+        
+	updateThumbPosition()
+}
+```
+
+Create a function which uses **currentAngle** and calculates the CGRect for the thumb view.
+
+```swift
+private func updateThumbPosition() {
+	let angle = degreeToRadian(Double(currentAngle))
+ 
+	let x = cos(angle)
+	let y = sin(angle)
+ 
+	var rect = thumbButton.frame
+ 
+	let radius = self.frame.size.width * 0.5
+	
+	let center = CGPointMake(radius, radius)
+ 
+	// x = cos(angle) * radius + CenterX;
+	let finalX = (CGFloat(x) * radius) + center.x
+ 
+	// y = sin(angle) * radius + CenterY;
+	let finalY = (CGFloat(y) * radius) + center.y
+ 
+	rect.origin.x = finalX
+	rect.origin.y = finalY
+ 
+	thumbButton.frame = rect
+}
+```
+
 ### Begin
 
 The size of the thumb 20x20, which is not a good enought size for user interaction. We dont want our user to be touching the views precisely. We want our user to interaction with our views naturally. So we need to increasing the touch region on the thumb view by some points. 
@@ -111,36 +169,8 @@ Here is the formula,
 	x = cos(angle) * radius + CenterX;
 
 	y = sin(angle) * radius + CenterY;
-	
-Lets create a function which will takes angle as a parameter and calculates the CGRect for the thumb view.
 
-```swift
-private func moveThumbToAngle(angleInRadians angle: Double) {
-	currentAngle = Float(radianToDegree(angle))
- 
-	let x = cos(angle)
-	let y = sin(angle)
- 
-	var rect = thumbButton.frame
- 
-	let radius = self.frame.size.width * 0.5
-	
-	let center = CGPointMake(radius, radius)
- 
-	// x = cos(angle) * radius + CenterX;
-	let finalX = (CGFloat(x) * radius) + center.x
- 
-	// y = sin(angle) * radius + CenterY;
-	let finalY = (CGFloat(y) * radius) + center.y
- 
-	rect.origin.x = finalX
-	rect.origin.y = finalY
- 
-	thumbButton.frame = rect
-}
-```
-
-Put it all together,
+Putting it all together,
 
 ```swift
 override func continueTrackingWithTouch(touch: UITouch, withEvent event: UIEvent?) -> Bool {
@@ -151,7 +181,7 @@ override func continueTrackingWithTouch(touch: UITouch, withEvent event: UIEvent
         
 	let angle = Double(atan2(Double(dy), Double(dx)))
         
-	moveThumbToAngle(angleInRadians: angle)
+	currentAngle = radianToDegree(angle)
         
 	return true
 }
