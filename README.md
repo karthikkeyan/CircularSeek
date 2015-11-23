@@ -158,5 +158,3 @@ override func continueTrackingWithTouch(touch: UITouch, withEvent event: UIEvent
 ```
 
 Now thumb view will rotate in a circular path inside your view's bounds.
-
-You can download [CircularSeeker](https://github.com/karthikkeyan/CircularSeek) project from github. It is written in swift.
