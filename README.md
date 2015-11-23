@@ -10,7 +10,7 @@ seekBar.addTarget(self, action: Selector("seekBarDidChangeValue:"), forControlEv
 self.view.addSubview(seekBar)
 ```
 
-<img src="https://github.com/karthikkeyan/CircularSeek/blob/master/CircleSeek.png" />
+<img src="https://github.com/karthikkeyan/CircularSeek/blob/master/circularseeker.gif" />
 
 
 # Logic Behind CircularSeeker

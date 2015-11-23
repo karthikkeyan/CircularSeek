@@ -24,9 +24,17 @@ class CircularSeeker: UIControl {
     lazy var thumbButton = UIButton(type: .Custom)
     
     
-    var startAngle: Float = 110.0
+    var startAngle: Float = 110.0 {
+        didSet {
+            self.setNeedsLayout()
+        }
+    }
     
-    var endAngle: Float = 70.0
+    var endAngle: Float = 70.0 {
+        didSet {
+            self.setNeedsLayout()
+        }
+    }
     
     var currentAngle: Float = 120.0 {
         didSet {
@@ -34,9 +42,19 @@ class CircularSeeker: UIControl {
         }
     }
     
-    var seekBarColor: UIColor = UIColor.grayColor()
+    var seekBarColor: UIColor = UIColor.grayColor() {
+        didSet {
+            seekerBarLayer.strokeColor = seekBarColor.CGColor
+            self.setNeedsDisplay()
+        }
+    }
     
-    var thumbColor: UIColor = UIColor.redColor()
+    var thumbColor: UIColor = UIColor.redColor() {
+        didSet {
+            thumbButton.backgroundColor = thumbColor
+            self.setNeedsDisplay()
+        }
+    }
     
     override func awakeFromNib() {
         super.awakeFromNib()
