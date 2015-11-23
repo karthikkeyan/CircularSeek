@@ -2,12 +2,12 @@
 
 ```swift
 let seekBar = CircularSeeker()
-        seekBar.frame = CGRect(x: 50, y: 50, width: 200, height: 200)
-        seekBar.startAngle = 120
-        seekBar.endAngle = 60
-        seekBar.currentAngle = 120
-        seekBar.addTarget(self, action: Selector("seekBarDidChangeValue:"), forControlEvents: .ValueChanged)
-        self.view.addSubview(seekBar)
+seekBar.frame = CGRect(x: 50, y: 50, width: 200, height: 200)
+seekBar.startAngle = 120
+seekBar.endAngle = 60
+seekBar.currentAngle = 120
+seekBar.addTarget(self, action: Selector("seekBarDidChangeValue:"), forControlEvents: .ValueChanged)
+self.view.addSubview(seekBar)
 ```
 
 <img src="https://github.com/karthikkeyan/CircularSeek/blob/master/CircleSeek.png" />
