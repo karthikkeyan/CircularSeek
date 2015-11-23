@@ -10,7 +10,7 @@ let seekBar = CircularSeeker()
         self.view.addSubview(seekBar)
 ```
 
-{% img https://github.com/karthikkeyan/CircularSeek/blob/master/CircleSeek.png %}
+<img src="https://github.com/karthikkeyan/CircularSeek/blob/master/CircleSeek.png" />
 
 
 # Logic Behind CircularSeeker
@@ -22,7 +22,7 @@ It involves simple trigonometry. The above image is the final output of our cont
 
 Since UI we are going to develop is a **circle**, code we need to recall our high school trigonometry.
 
-{% img https://github.com/karthikkeyan/CircularSeek/blob/master/circle-trigonometry.png %}
+<img src="https://github.com/karthikkeyan/CircularSeek/blob/master/circle-trigonometry.png" />
 
 	sin(θ) = b/c  where b is opposite side, c is hypothenuse 
 
