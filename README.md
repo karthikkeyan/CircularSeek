@@ -15,12 +15,12 @@ self.view.addSubview(seekBar)
 
 # Logic Behind CircularSeeker
 
-It involves simple trigonometry. The above image is the final output of our control. User can drag the red colored thumb view in the given circular path.
+It involves simple trigonometry. The above image is the final output of our component. User can drag the red colored thumb view in the given circular path.
 
 
-## Formulas
+## Formulae
 
-Since UI we are going to develop is a **circle**, code we need to recall our high school trigonometry.
+Since the UI is in the form of a circle, we need to recall our high school trigonometry.
 
 <img src="https://github.com/karthikkeyan/CircularSeek/blob/master/circle-trigonometry.png" />
 
@@ -35,19 +35,15 @@ Since UI we are going to develop is a **circle**, code we need to recall our hig
 	y = sin(angle) * radius + CenterY;
 
 
-## Math problems to address
+## Problems to address
 
-Now, to implement what are all the problems we need to address,
-
-1. We need to find the angle of given point(x, y) in a circle
-2. Find here angle intersect, with the circle's border
-
-These two points going to help us move the thumb view.
+1. For any touch point (x, y), we need to find the angle w.r.t. to the centre of the circle.
+2. Find where the line joining the touch point and the center intersects the circle.
 
 
 ## Lets Code
 
-Lets create a a new class called **CircularSeeker** subclassing UIControl, so that we can get the benifit of the following three methods.
+Let’s create a a new class called **CircularSeeker** subclassing UIControl, so that we can get the benefit of the following three methods -
 
 ```swift
 
@@ -61,7 +57,7 @@ func endTrackingWithTouch(touch: UITouch?, withEvent event: UIEvent?)
 
 ### Subview Setup
 
-Lets create a property called **currentAngle** and it's **didSet** will reloayout subviews whenever its value changed.
+Let’s create a property called **currentAngle** and its **didSet** will relayout subviews whenever its is value changed.
 
 ```swift
 var currentAngle: Float = 120.0 {
@@ -71,7 +67,7 @@ var currentAngle: Float = 120.0 {
 }
 ```
 
-Override the **layoutSubviews** to update circular path and thumb position 
+Override **layoutSubviews** method to update circular path and thumb position
 
 ```swift
 override func layoutSubviews() {
@@ -89,7 +85,7 @@ override func layoutSubviews() {
 }
 ```
 
-Create a function which uses **currentAngle** and calculates the CGRect for the thumb view.
+Create a function which uses **currentAngle** and calculates the **CGRect** for the thumb view.
 
 ```swift
 private func updateThumbPosition() {
@@ -119,7 +115,7 @@ private func updateThumbPosition() {
 
 ### Begin
 
-The size of the thumb 20x20, which is not a good enought size for user interaction. We dont want our user to be touching the views precisely. We want our user to interaction with our views naturally. So we need to increasing the touch region on the thumb view by some points. 
+The size of the thumb 20 x 20, which is not a good enought size for user interaction. We don’t want our user to be touching the views precisely. We want our user to interaction with our views naturally. So we need to increasing the touch region on the thumb view by some points.
 
 ```swift
 let rect = CGRectInset(self.thumbButton.frame, -20, -20)
@@ -127,7 +123,7 @@ let rect = CGRectInset(self.thumbButton.frame, -20, -20)
 
 the above code returns the increased region of the thumb view by 20 points.
 
-Besides, the touch event methods will get call when/where ever user interact within our view. We dont what that. What we what is to begin the user interaction if only the user touches the **thumb view** of our control. 
+Besides, the touch event methods will get called when/where ever user interact within our view. We don’t what that. What we what is to begin the user interaction if only the user touches the thumb view of our control.
 
 ```swift
 
@@ -139,14 +135,14 @@ override func beginTrackingWithTouch(touch: UITouch, withEvent event: UIEvent?) 
     
 ```
 
-so if only user touches anywhere in/around the thumb view, we are beginning the event.
+So we are beginning the touches event even when user touches anywhere around the thumb view.
 
 
-### Move
+### Touch Move
 
-Now lets write the code to move the thumb. Remember the "Math problems to address".
+Now let’s write the code to move the thumb. Remember the “**Math problems to address**”.
 
-First, we need to get the angle(θ in circle diagram) of the user's current location. It is simple to calculate using **atan2(y, x)** method.
+First, we need to get the angle(θ in circle diagram) of the user’s current location. It is simple to calculate using **atan2(y, x)** method.
 
 Here x, is the horizontal distance between users location and center and y is vertical distance.
 
@@ -162,7 +158,7 @@ let angle = Double(atan2(Double(dy), Double(dx)))
 
 Now that we have the angle, we need to find where the angle intersect with circle's border, i.e. the point where the angle meet the circle's border. 
 
-Here is the formula,
+Here is the formulae,
 
 	x = cos(angle) * radius + CenterX;
 
