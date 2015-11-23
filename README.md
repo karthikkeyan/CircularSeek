@@ -13,7 +13,7 @@ self.view.addSubview(seekBar)
 <img src="https://github.com/karthikkeyan/CircularSeek/blob/master/circularseeker.gif" />
 
 
-# Logic Behind CircularSeeker
+# Logic Behind
 
 It involves simple trigonometry. The above image is the final output of our component. User can drag the red colored thumb view in the given circular path.
 
@@ -41,7 +41,7 @@ Since the UI is in the form of a circle, we need to recall our high school trigo
 2. Find where the line joining the touch point and the center intersects the circle.
 
 
-## Lets Code
+## Let's Code
 
 Let’s create a a new class called **CircularSeeker** subclassing UIControl, so that we can get the benefit of the following three methods -
 
@@ -113,7 +113,7 @@ private func updateThumbPosition() {
 }
 ```
 
-### Begin
+### Touch Begin
 
 The size of the thumb 20 x 20, which is not a good enought size for user interaction. We don’t want our user to be touching the views precisely. We want our user to interaction with our views naturally. So we need to increasing the touch region on the thumb view by some points.
 
