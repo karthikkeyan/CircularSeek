@@ -59,8 +59,6 @@ func endTrackingWithTouch(touch: UITouch?, withEvent event: UIEvent?)
 
 ```
 
-These methods will get call when/where ever user interact within our view. We dont what that. What we what is to begin the user interaction if only the user touches the **thumb view** of our control.
-
 ### Subview Setup
 
 Lets create a property called **currentAngle** and it's **didSet** will reloayout subviews whenever its value changed.
@@ -129,6 +127,8 @@ let rect = CGRectInset(self.thumbButton.frame, -20, -20)
 
 the above code returns the increased region of the thumb view by 20 points.
 
+Besides, the touch event methods will get call when/where ever user interact within our view. We dont what that. What we what is to begin the user interaction if only the user touches the **thumb view** of our control. 
+
 ```swift
 
 override func beginTrackingWithTouch(touch: UITouch, withEvent event: UIEvent?) -> Bool {
@@ -139,7 +139,7 @@ override func beginTrackingWithTouch(touch: UITouch, withEvent event: UIEvent?) 
     
 ```
 
-so if the user touches anywhere in/around the thumb view, we are beginning the event.
+so if only user touches anywhere in/around the thumb view, we are beginning the event.
 
 
 ### Move

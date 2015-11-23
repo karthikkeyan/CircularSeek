@@ -114,7 +114,7 @@ class CircularSeeker: UIControl {
         thumbButton.frame = rect
     }
     
-    private func resetThumb() {
+    private func thumbMoveSidComplete() {
         UIView.animateWithDuration(0.2, delay: 0.0, options: [ .CurveEaseOut, .BeginFromCurrentState ], animations: { () -> Void in
             self.thumbButton.transform = CGAffineTransformIdentity
             }, completion: { _ in
@@ -173,14 +173,14 @@ class CircularSeeker: UIControl {
         if startAngle > endAngle {
             if degree < Double(startAngle) && degree > Double(endAngle) {
                 moveToClosestEdge(degree)
-                resetThumb()
+                thumbMoveSidComplete()
                 return false
             }
         }
         else {
             if degree > Double(endAngle) || degree < Double(startAngle) {
                 moveToClosestEdge(degree)
-                resetThumb()
+                thumbMoveSidComplete()
                 return false
             }
         }
@@ -191,7 +191,7 @@ class CircularSeeker: UIControl {
     }
     
     override func endTrackingWithTouch(touch: UITouch?, withEvent event: UIEvent?) {
-        resetThumb()
+        thumbMoveSidComplete()
     }
     
     override func layoutSubviews() {
