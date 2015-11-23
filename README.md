@@ -160,8 +160,6 @@ let dy = location.y - (self.frame.size.height * 0.5)
 let angle = Double(atan2(Double(dy), Double(dx)))
 ```
 
-The problem with the 
-
 Now that we have the angle, we need to find where the angle intersect with circle's border, i.e. the point where the angle meet the circle's border. 
 
 Here is the formula,
