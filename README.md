@@ -10,21 +10,19 @@ let seekBar = CircularSeeker()
         self.view.addSubview(seekBar)
 ```
 
-<img src="/Users/karthikkeyan/Documents/Projects/CircularSeek/CircleSeek.png" />
+{% img https://github.com/karthikkeyan/CircularSeek/blob/master/CircleSeek.png %}
 
 
 # Logic Behind CircularSeeker
 
-In this article im going to teach how to create a circular progress bar. It involves simple math. 
-
-The above image is the final output of our control. User can drag the red colored thumb view in the given circular path.
+It involves simple trigonometry. The above image is the final output of our control. User can drag the red colored thumb view in the given circular path.
 
 
 ## Formulas
 
 Since UI we are going to develop is a **circle**, code we need to recall our high school trigonometry.
 
-<img src="/Users/karthikkeyan/Documents/Projects/CircularSeek/circle-trigonometry.png" />
+{% img https://github.com/karthikkeyan/CircularSeek/blob/master/circle-trigonometry.png %}
 
 	sin(θ) = b/c  where b is opposite side, c is hypothenuse 
 
