@@ -132,16 +132,87 @@ class CircularSeeker: UIControl {
         thumbButton.frame = rect
     }
     
-    private func thumbMoveSidComplete() {
+    private func thumbMoveDidComplete() {
         UIView.animateWithDuration(0.2, delay: 0.0, options: [ .CurveEaseOut, .BeginFromCurrentState ], animations: { () -> Void in
             self.thumbButton.transform = CGAffineTransformIdentity
-            }, completion: { _ in
-                self.fireValueChangeEvent()
+            }, completion: { [weak self] _ in
+                self?.fireValueChangeEvent()
             })
     }
     
     private func fireValueChangeEvent() {
         self.sendActionsForControlEvents(.ValueChanged)
+    }
+    
+    private func degreeForLocation(location: CGPoint) -> Double {
+        let dx = location.x - (self.frame.size.width * 0.5)
+        let dy = location.y - (self.frame.size.height * 0.5)
+        
+        let angle = Double(atan2(Double(dy), Double(dx)))
+        
+        var degree = radianToDegree(angle)
+        if degree < 0 {
+            degree = 360 + degree
+        }
+        
+        return degree
+    }
+    
+    private func moveToPoint(point: CGPoint) -> Bool {
+        var degree = degreeForLocation(point)
+        
+        func moveToClosestEdge(degree: Double) {
+            let startDistance = fabs(Float(degree) - startAngle)
+            let endDistance = fabs(Float(degree) - endAngle)
+            
+            if startDistance < endDistance {
+                currentAngle = startAngle
+            }
+            else {
+                currentAngle = endAngle
+            }
+        }
+        
+        if startAngle > endAngle {
+            if degree < Double(startAngle) && degree > Double(endAngle) {
+                moveToClosestEdge(degree)
+                thumbMoveDidComplete()
+                return false
+            }
+        }
+        else {
+            if degree > Double(endAngle) || degree < Double(startAngle) {
+                moveToClosestEdge(degree)
+                thumbMoveDidComplete()
+                return false
+            }
+        }
+        
+        currentAngle = Float(degree)
+        
+        return true;
+    }
+    
+    
+    // MARK: Public Methods -
+    
+    func moveToAngle(angle: Float, duration: CFTimeInterval) {
+        let center = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)
+        
+        let sAngle = degreeToRadian(Double(startAngle))
+        let eAngle = degreeToRadian(Double(angle))
+        
+        let path = UIBezierPath(arcCenter: center, radius: (self.bounds.size.width - 18)/2, startAngle: CGFloat(sAngle), endAngle: CGFloat(eAngle), clockwise: true)
+        
+        CATransaction.begin()
+        let animation = CAKeyframeAnimation(keyPath: "position")
+        animation.duration = duration
+        animation.path = path.CGPath
+        thumbButton.layer.addAnimation(animation, forKey: "moveToAngle")
+        CATransaction.setCompletionBlock { [weak self] in
+            self?.currentAngle = angle
+        }
+        CATransaction.commit()
     }
     
     
@@ -164,52 +235,26 @@ class CircularSeeker: UIControl {
     }
     
     override func continueTrackingWithTouch(touch: UITouch, withEvent event: UIEvent?) -> Bool {
-        let location = touch.locationInView(self)
-        
-        let dx = location.x - (self.frame.size.width * 0.5)
-        let dy = location.y - (self.frame.size.height * 0.5)
-        
-        let angle = Double(atan2(Double(dy), Double(dx)))
-        
-        var degree = radianToDegree(angle)
-        if degree < 0 {
-            degree = 360 + degree
-        }
-        
-        func moveToClosestEdge(degree: Double) {
-            let startDistance = fabs(Float(degree) - startAngle)
-            let endDistance = fabs(Float(degree) - endAngle)
+        if #available(iOS 9, *) {
+            guard let coalescedTouches = event?.coalescedTouchesForTouch(touch) else {
+                return moveToPoint(touch.locationInView(self))
+            }
             
-            if startDistance < endDistance {
-                currentAngle = startAngle
+            let result = true
+            for cTouch in coalescedTouches {
+                let result = moveToPoint(cTouch.locationInView(self))
+                
+                if result == false { break }
             }
-            else {
-                currentAngle = endAngle
-            }
+            
+            return result
         }
         
-        if startAngle > endAngle {
-            if degree < Double(startAngle) && degree > Double(endAngle) {
-                moveToClosestEdge(degree)
-                thumbMoveSidComplete()
-                return false
-            }
-        }
-        else {
-            if degree > Double(endAngle) || degree < Double(startAngle) {
-                moveToClosestEdge(degree)
-                thumbMoveSidComplete()
-                return false
-            }
-        }
-        
-        currentAngle = Float(degree)
-        
-        return true
+        return moveToPoint(touch.locationInView(self))
     }
     
     override func endTrackingWithTouch(touch: UITouch?, withEvent event: UIEvent?) {
-        thumbMoveSidComplete()
+        thumbMoveDidComplete()
     }
     
     override func layoutSubviews() {

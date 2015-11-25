@@ -32,6 +32,10 @@ class ViewController: UIViewController {
         seekBar.frame = CGRect(x: (self.view.frame.size.width - 200) * 0.5, y: (self.view.frame.size.height - 200) * 0.5, width: 200, height: 200)
     }
     
+    override func viewDidAppear(animated: Bool) {
+        seekBar.moveToAngle(270, duration: 1.0)
+    }
+    
     func seekBarDidChangeValue(sender: AnyObject) {
         print(seekBar.currentAngle)
     }
