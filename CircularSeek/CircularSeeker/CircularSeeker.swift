@@ -18,9 +18,15 @@ private func radianToDegree(radian: Double) -> Double {
 }
 
 
+
+protocol CircularSeekerDelegate: class {
+    func circularSeeker(_ seeker: CircularSeeker, didChangeValue value: Float)
+}
+
+
 class CircularSeeker: UIControl {
     
-    var vcDelegate: VcDelegate?
+    weak var delegate: CircularSeekerDelegate?
     
     lazy var seekerBarLayer = CAShapeLayer()
     
@@ -145,7 +151,7 @@ class CircularSeeker: UIControl {
     }
     
     private func fireValueChangeEvent() {
-        vcDelegate?.valueChanged(value: self.currentAngle)
+        delegate?.circularSeeker(self, didChangeValue: currentAngle)
     }
     
     private func degreeForLocation(location: CGPoint) -> Double {

@@ -13,7 +13,7 @@ protocol VcDelegate {
 }
 
 class ViewController: UIViewController,
-                      VcDelegate {
+                      CircularSeekerDelegate {
     
     let seekBar = CircularSeeker()
 
@@ -27,7 +27,7 @@ class ViewController: UIViewController,
         seekBar.currentAngle = 120
         seekBar.thumbColor = UIColor(colorLiteralRed: 242.0/255.0, green: 107.0/255.0, blue: 107.0/255.0, alpha: 1.0)
         seekBar.seekBarColor = UIColor(colorLiteralRed: 238.0/255.0, green: 238.0/255.0, blue: 238.0/255.0, alpha: 1.0)
-        seekBar.vcDelegate = self
+        seekBar.delegate = self
         self.view.addSubview(seekBar)
     }
     
@@ -40,13 +40,10 @@ class ViewController: UIViewController,
     override func viewDidAppear(_ animated: Bool) {
         seekBar.moveToAngle(angle: 270, duration: 1.0)
     }
+
     
-    func seekBarDidChangeValue(_ sender: AnyObject) {
-        print(seekBar.currentAngle)
-    }
-    
-    func valueChanged(value: Float) {
-        print("\(value)")
+    func circularSeeker(_ seeker: CircularSeeker, didChangeValue value: Float) {
+        print(value)
     }
 
 }
