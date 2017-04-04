@@ -8,7 +8,12 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+protocol VcDelegate {
+    func valueChanged(value: Float)
+}
+
+class ViewController: UIViewController,
+                      CircularSeekerDelegate {
     
     let seekBar = CircularSeeker()
 
@@ -22,7 +27,7 @@ class ViewController: UIViewController {
         seekBar.currentAngle = 120
         seekBar.thumbColor = UIColor(colorLiteralRed: 242.0/255.0, green: 107.0/255.0, blue: 107.0/255.0, alpha: 1.0)
         seekBar.seekBarColor = UIColor(colorLiteralRed: 238.0/255.0, green: 238.0/255.0, blue: 238.0/255.0, alpha: 1.0)
-        seekBar.addTarget(self, action: Selector("seekBarDidChangeValue:"), forControlEvents: .ValueChanged)
+        seekBar.delegate = self
         self.view.addSubview(seekBar)
     }
     
@@ -32,12 +37,13 @@ class ViewController: UIViewController {
         seekBar.frame = CGRect(x: (self.view.frame.size.width - 200) * 0.5, y: (self.view.frame.size.height - 200) * 0.5, width: 200, height: 200)
     }
     
-    override func viewDidAppear(animated: Bool) {
-        seekBar.moveToAngle(270, duration: 1.0)
+    override func viewDidAppear(_ animated: Bool) {
+        seekBar.moveToAngle(angle: 270, duration: 1.0)
     }
+
     
-    func seekBarDidChangeValue(sender: AnyObject) {
-        print(seekBar.currentAngle)
+    func circularSeeker(_ seeker: CircularSeeker, didChangeValue value: Float) {
+        print(value)
     }
 
 }

@@ -8,48 +8,57 @@
 
 import UIKit
 
-func degreeToRadian(degree: Double) -> Double {
-    return Double(degree * (M_PI/180))
+private func degreeToRadian(degree: Double) -> Double {
+    return Double(degree * (Double.pi/180))
 }
 
-func radianToDegree(radian: Double) -> Double {
-    return Double(radian * (180/M_PI))
+
+private func radianToDegree(radian: Double) -> Double {
+    return Double(radian * (180/Double.pi))
+}
+
+
+
+protocol CircularSeekerDelegate: class {
+    func circularSeeker(_ seeker: CircularSeeker, didChangeValue value: Float)
 }
 
 
 class CircularSeeker: UIControl {
     
+    weak var delegate: CircularSeekerDelegate?
+    
     lazy var seekerBarLayer = CAShapeLayer()
     
-    lazy var thumbButton = UIButton(type: .Custom)
+    lazy var thumbButton = UIButton(type: .custom)
     
     
-    var startAngle: Float = 110.0 {
+    var startAngle: Float = 90.0 {
         didSet {
             self.setNeedsLayout()
         }
     }
     
-    var endAngle: Float = 70.0 {
+    var endAngle: Float = 180.0 {
         didSet {
             self.setNeedsLayout()
         }
     }
     
-    var currentAngle: Float = 120.0 {
+    var currentAngle: Float = 180.0 {
         didSet {
             self.setNeedsLayout()
         }
     }
     
-    var seekBarColor: UIColor = UIColor.grayColor() {
+    var seekBarColor: UIColor = .gray {
         didSet {
-            seekerBarLayer.strokeColor = seekBarColor.CGColor
+            seekerBarLayer.strokeColor = seekBarColor.cgColor
             self.setNeedsDisplay()
         }
     }
     
-    var thumbColor: UIColor = UIColor.redColor() {
+    var thumbColor: UIColor = .red {
         didSet {
             thumbButton.backgroundColor = thumbColor
             self.setNeedsDisplay()
@@ -67,10 +76,11 @@ class CircularSeeker: UIControl {
         
         initSubViews()
     }
-
+    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
+    
     
     
     // MARK: Private Methods -
@@ -81,18 +91,18 @@ class CircularSeeker: UIControl {
     }
     
     private func addSeekerBar() {
-        let center = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)
+        let center = CGPoint(x: self.bounds.size.width/2, y: self.bounds.size.height/2)
         
-        let sAngle = degreeToRadian(Double(startAngle))
-        let eAngle = degreeToRadian(Double(endAngle))
+        let sAngle = degreeToRadian(degree: Double(startAngle))
+        let eAngle = degreeToRadian(degree: Double(endAngle))
         
         let path = UIBezierPath(arcCenter: center, radius: (self.bounds.size.width - 18)/2, startAngle: CGFloat(sAngle), endAngle: CGFloat(eAngle), clockwise: true)
         
-        seekerBarLayer.path = path.CGPath
+        seekerBarLayer.path = path.cgPath
         seekerBarLayer.lineWidth = 4.0
         seekerBarLayer.lineCap = kCALineCapRound
-        seekerBarLayer.strokeColor = seekBarColor.CGColor
-        seekerBarLayer.fillColor = UIColor.clearColor().CGColor
+        seekerBarLayer.strokeColor = seekBarColor.cgColor
+        seekerBarLayer.fillColor = UIColor.clear.cgColor
         
         if seekerBarLayer.superlayer == nil {
             self.layer.addSublayer(seekerBarLayer)
@@ -100,16 +110,16 @@ class CircularSeeker: UIControl {
     }
     
     private func addThumb() {
-        thumbButton.frame = CGRectMake(0, 0, 20, 20)
+        thumbButton.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
         thumbButton.backgroundColor = thumbColor
         thumbButton.layer.cornerRadius = thumbButton.frame.size.width/2
         thumbButton.layer.masksToBounds = true
-        thumbButton.userInteractionEnabled = false
+        thumbButton.isUserInteractionEnabled = false
         self.addSubview(thumbButton)
     }
     
     private func updateThumbPosition() {
-        let angle = degreeToRadian(Double(currentAngle))
+        let angle = degreeToRadian(degree: Double(currentAngle))
         
         let x = cos(angle)
         let y = sin(angle)
@@ -117,7 +127,7 @@ class CircularSeeker: UIControl {
         var rect = thumbButton.frame
         
         let radius = self.frame.size.width * 0.5
-        let center = CGPointMake(radius, radius)
+        let center = CGPoint(x: radius, y: radius)
         let thumbCenter: CGFloat = 10.0
         
         // x = cos(angle) * radius + CenterX;
@@ -133,15 +143,15 @@ class CircularSeeker: UIControl {
     }
     
     private func thumbMoveDidComplete() {
-        UIView.animateWithDuration(0.2, delay: 0.0, options: [ .CurveEaseOut, .BeginFromCurrentState ], animations: { () -> Void in
-            self.thumbButton.transform = CGAffineTransformIdentity
-            }, completion: { [weak self] _ in
-                self?.fireValueChangeEvent()
-            })
+        UIView.animate(withDuration: 0.2, delay: 0.0, options: [ .curveEaseOut, .beginFromCurrentState ], animations: { () -> Void in
+            self.thumbButton.transform = .identity
+        }, completion: { [weak self] _ in
+            self?.fireValueChangeEvent()
+        })
     }
     
     private func fireValueChangeEvent() {
-        self.sendActionsForControlEvents(.ValueChanged)
+        delegate?.circularSeeker(self, didChangeValue: currentAngle)
     }
     
     private func degreeForLocation(location: CGPoint) -> Double {
@@ -150,7 +160,7 @@ class CircularSeeker: UIControl {
         
         let angle = Double(atan2(Double(dy), Double(dx)))
         
-        var degree = radianToDegree(angle)
+        var degree = radianToDegree(radian: angle)
         if degree < 0 {
             degree = 360 + degree
         }
@@ -159,7 +169,7 @@ class CircularSeeker: UIControl {
     }
     
     private func moveToPoint(point: CGPoint) -> Bool {
-        var degree = degreeForLocation(point)
+        var degree = degreeForLocation(location: point)
         
         func moveToClosestEdge(degree: Double) {
             let startDistance = fabs(Float(degree) - startAngle)
@@ -175,14 +185,14 @@ class CircularSeeker: UIControl {
         
         if startAngle > endAngle {
             if degree < Double(startAngle) && degree > Double(endAngle) {
-                moveToClosestEdge(degree)
+                moveToClosestEdge(degree: degree)
                 thumbMoveDidComplete()
                 return false
             }
         }
         else {
             if degree > Double(endAngle) || degree < Double(startAngle) {
-                moveToClosestEdge(degree)
+                moveToClosestEdge(degree: degree)
                 thumbMoveDidComplete()
                 return false
             }
@@ -197,18 +207,18 @@ class CircularSeeker: UIControl {
     // MARK: Public Methods -
     
     func moveToAngle(angle: Float, duration: CFTimeInterval) {
-        let center = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)
+        let center = CGPoint(x: self.bounds.size.width/2, y: self.bounds.size.height/2)
         
-        let sAngle = degreeToRadian(Double(startAngle))
-        let eAngle = degreeToRadian(Double(angle))
+        let sAngle = degreeToRadian(degree: Double(startAngle))
+        let eAngle = degreeToRadian(degree: Double(angle))
         
         let path = UIBezierPath(arcCenter: center, radius: (self.bounds.size.width - 18)/2, startAngle: CGFloat(sAngle), endAngle: CGFloat(eAngle), clockwise: true)
         
         CATransaction.begin()
         let animation = CAKeyframeAnimation(keyPath: "position")
         animation.duration = duration
-        animation.path = path.CGPath
-        thumbButton.layer.addAnimation(animation, forKey: "moveToAngle")
+        animation.path = path.cgPath
+        thumbButton.layer.add(animation, forKey: "moveToAngle")
         CATransaction.setCompletionBlock { [weak self] in
             self?.currentAngle = angle
         }
@@ -218,31 +228,31 @@ class CircularSeeker: UIControl {
     
     // MARK: Touch Events -
     
-    override func beginTrackingWithTouch(touch: UITouch, withEvent event: UIEvent?) -> Bool {
-        let point = touch.locationInView(self)
+    override func beginTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
+        let point = touch.location(in: self)
         
-        let rect = CGRectInset(self.thumbButton.frame, -20, -20)
+        let rect = self.thumbButton.frame.insetBy(dx: -20, dy: -20)
         
-        let canBegin = CGRectContainsPoint(rect, point)
+        let canBegin = rect.contains(point)
         
         if canBegin {
-            UIView.animateWithDuration(0.2, delay: 0.0, options: [ .CurveEaseIn, .BeginFromCurrentState ], animations: { () -> Void in
-                self.thumbButton.transform = CGAffineTransformMakeScale(1.2, 1.2)
-                }, completion: nil)
+            UIView.animate(withDuration: 0.2, delay: 0.0, options: [ .curveEaseIn, .beginFromCurrentState ], animations: { () -> Void in
+                self.thumbButton.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+            }, completion: nil)
         }
         
         return canBegin
     }
     
-    override func continueTrackingWithTouch(touch: UITouch, withEvent event: UIEvent?) -> Bool {
+    override func continueTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
         if #available(iOS 9, *) {
-            guard let coalescedTouches = event?.coalescedTouchesForTouch(touch) else {
-                return moveToPoint(touch.locationInView(self))
+            guard let coalescedTouches = event?.coalescedTouches(for: touch) else {
+                return moveToPoint(point: touch.location(in: self))
             }
             
             let result = true
             for cTouch in coalescedTouches {
-                let result = moveToPoint(cTouch.locationInView(self))
+                let result = moveToPoint(point: cTouch.location(in: self))
                 
                 if result == false { break }
             }
@@ -250,25 +260,24 @@ class CircularSeeker: UIControl {
             return result
         }
         
-        return moveToPoint(touch.locationInView(self))
+        return moveToPoint(point: touch.location(in: self))
     }
     
-    override func endTrackingWithTouch(touch: UITouch?, withEvent event: UIEvent?) {
+    override func endTracking(_ touch: UITouch?, with event: UIEvent?) {
         thumbMoveDidComplete()
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        let center = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2)
+        let center = CGPoint(x: self.bounds.size.width/2, y: self.bounds.size.height/2)
         
-        let sAngle = degreeToRadian(Double(startAngle))
-        let eAngle = degreeToRadian(Double(endAngle))
+        let sAngle = degreeToRadian(degree: Double(startAngle))
+        let eAngle = degreeToRadian(degree: Double(endAngle))
         
         let path = UIBezierPath(arcCenter: center, radius: (self.bounds.size.width - 18)/2, startAngle: CGFloat(sAngle), endAngle: CGFloat(eAngle), clockwise: true)
-        seekerBarLayer.path = path.CGPath
+        seekerBarLayer.path = path.cgPath
         
         updateThumbPosition()
     }
-    
 }
